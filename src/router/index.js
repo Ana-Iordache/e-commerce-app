@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import App from '../App.vue'; 
+import Home from '@/views/Home.vue'; 
 import NewIn from '@/views/app-navigation/NewIn.vue'
 import Clothing from '@/views/app-navigation/Clothing.vue'
 import Shoes from '@/views/app-navigation/Shoes.vue'
@@ -11,7 +11,11 @@ import ShoppingCart from '@/views/user-navigation/ShoppingCart.vue'
 const routes = [
   {
     path: '/',
-    component: App,
+    redirect: '/home'
+  },
+  {
+    path: '/home',
+    component: Home,
   },
   {
     path: '/newin',
