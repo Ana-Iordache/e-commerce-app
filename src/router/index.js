@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/views/Home.vue'; 
+import ConnectUser from '@/views/user-navigation/account-section/ConnectUser.vue'; 
 import NewIn from '@/views/app-navigation/NewIn.vue'
 import Clothing from '@/views/app-navigation/Clothing.vue'
 import Shoes from '@/views/app-navigation/Shoes.vue'
@@ -16,6 +17,10 @@ const routes = [
   {
     path: '/home',
     component: Home,
+  },
+  {
+    path: '/connect',
+    component: ConnectUser,
   },
   {
     path: '/newin',

@@ -30,7 +30,7 @@ export default {
         return {
             appTitle: 'E-commerce App',
             userNavigationItems: [
-                { title: 'My account', path: '/account', icon: 'mdi-account-circle' },
+                { title: 'My account', path: '/connect', icon: 'mdi-account-circle' },
                 { title: 'Favorites', path: '/favorites', icon: 'mdi-heart' },
                 { title: 'Shopping cart', path: '/cart', icon: 'mdi-shopping' }
             ],

@@ -22,4 +22,17 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.page_container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: center;
+  margin: 2rem;
+}
+
+.form_title {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+</style>
