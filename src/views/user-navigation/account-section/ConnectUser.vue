@@ -54,7 +54,8 @@ export default {
 }
 
 .form_wrapper {
-    width: 100%;
+    width: 50%;
+    min-width: fit-content;
 }
 
 .v-tabs {

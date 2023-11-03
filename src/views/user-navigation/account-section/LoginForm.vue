@@ -5,7 +5,7 @@
             :rules="[rules.required]"></v-text-field>
         <v-text-field label="Password" :type="showPassword ? 'text' : 'password'" variant="outlined"
             prepend-inner-icon="mdi mdi-lock" :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-            @click:append-inner="showPassword = !showPassword"></v-text-field>
+            @click:append-inner="showPassword = !showPassword" :rules="[rules.required]"></v-text-field>
         <v-btn type="submit" variant="tonal" color="teal-darken-1">Login</v-btn>
     </v-form>
 </template>
@@ -17,7 +17,7 @@ export default {
         return {
             showPassword: false,
             rules: {
-                required: value => !!value || 'Field is required',
+                required: value => !!value || 'This field is required',
             },
         }
     },
