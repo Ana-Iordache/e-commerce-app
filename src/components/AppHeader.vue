@@ -12,11 +12,12 @@
                 <v-icon left dark>{{ item.icon }}</v-icon>
                 {{ item.title }}
             </v-btn>
+
         </v-toolbar-items>
 
         <template v-slot:extension>
             <v-tabs v-model="currentTab" align-tabs="title">
-                <v-tab v-for="item in appNavigationItems" :key="item" :value="item" :to="item.path">
+                <v-tab v-for="item in appNavigationItems" :key="item" :value="item" :to="item.path" v-show="showTab(item)">
                     {{ item.title }}
                 </v-tab>
             </v-tabs>
@@ -26,6 +27,8 @@
 
 <script>
 import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
+import { mapStores } from 'pinia';
+import { useAuthenticationStore } from '../pinia-stores/authenticationStore';
 
 export default {
     name: "AppHeader",
@@ -44,19 +47,28 @@ export default {
                 { title: 'Clothing', path: '/clothing' },
                 { title: 'Shoes', path: '/shoes' },
                 { title: 'Accessories', path: '/accessories' },
+                { title: 'Administration', path: '/administration' },
             ],
             currentTab: "",
             userIsLoggedIn: false,
             auth: getAuth(),
         }
     },
+    computed: {
+        ...mapStores(useAuthenticationStore)
+    },
     mounted() {
         this.auth = getAuth();
         // console.log(this.auth);
         onAuthStateChanged(this.auth, user => {
             this.userIsLoggedIn = user ? true : false;
-            this.userNavigationItems[3] = this.userIsLoggedIn ? { title: 'Logout', path: '/logout', icon: 'mdi-logout' } : { title: 'Login', path: '/connect', icon: 'mdi-login' };
-            // console.log(this.userIsLoggedIn);
+            if (this.userIsLoggedIn) {
+                this.userNavigationItems[3] = { title: 'Logout', path: '/logout', icon: 'mdi-logout' };
+                this.authenticationStore.setCurrentUser(user.email);
+            } else {
+                this.userNavigationItems[3] = { title: 'Login', path: '/connect', icon: 'mdi-login' };
+                this.authenticationStore.removeUser();
+            }
         })
     },
     methods: {
@@ -64,6 +76,9 @@ export default {
             signOut(this.auth).then(() => {
                 console.log("User signed out.");
             })
+        },
+        showTab(tab) {
+            return tab.title != 'Administration';
         }
     }
 }

@@ -8,6 +8,7 @@ import Accessories from '@/views/app-navigation/Accessories.vue'
 import UserAccount from '@/views/user-navigation/UserAccount.vue'
 import Favorites from '@/views/user-navigation/Favorites.vue'
 import ShoppingCart from '@/views/user-navigation/ShoppingCart.vue'
+import Administration from '@/views/app-navigation/Administration.vue'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 const routes = [
@@ -58,6 +59,13 @@ const routes = [
     path: '/cart',
     component: ShoppingCart,
   },
+  {
+    path: '/administration',
+    component: Administration,
+    meta: {
+      requiredAuth: true
+    }
+  }
 ];
 
 const router = createRouter({

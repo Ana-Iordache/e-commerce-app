@@ -12,6 +12,18 @@ async function getAll(req, res) {
     }
 }
 
+// GET /users/{email}
+async function getByEmail(req, res) {
+    const email = req.params.email;
+    const user = await Users.selectByEmail(email);
+
+    if (user[0]) {
+        res.json(user[0]);
+    } else {
+        res.status(404).json({ error: 'No user found.' })
+    }
+}
+
 // POST /users
 async function addOne(req, res) {
     // console.log("DEBUG: req.body ", req.body)
@@ -34,5 +46,6 @@ async function addOne(req, res) {
 
 module.exports = {
     getAll,
+    getByEmail,
     addOne,
 }

@@ -39,4 +39,8 @@ axios.defaults.baseURL = baseUrlAxios;
 import initilizeFirebase from './firebase-auth/auth';
 initilizeFirebase();
 
-app.use(router).use(vuetify).mount('#app')
+// Pinia
+import { createPinia } from 'pinia';
+const pinia = createPinia();
+
+app.use(router).use(vuetify).use(pinia).mount('#app')

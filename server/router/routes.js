@@ -20,6 +20,7 @@ async function requestHandler(callback, req, res) {
  * USERS
  */
 router.get("/users", (req, res) => requestHandler(users.getAll, req, res));
+router.get("/users/:email", (req, res) => requestHandler(users.getByEmail, req, res));
 router.post("/users", (req, res) => requestHandler(users.addOne, req, res))
 
 module.exports = router;
