@@ -78,7 +78,7 @@ export default {
             })
         },
         showTab(tab) {
-            return tab.title != 'Administration';
+            return tab.title != 'Administration' || (tab.title == 'Administration' && this.authenticationStore.user && this.authenticationStore.user.isAdmin);
         }
     }
 }
