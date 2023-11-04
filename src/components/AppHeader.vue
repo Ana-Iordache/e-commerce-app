@@ -7,7 +7,8 @@
         </v-toolbar-title>
         <!-- <v-spacer></v-spacer> -->
         <v-toolbar-items class="hidden-xs-only">
-            <v-btn flat v-for="item in userNavigationItems" :key="item.title" :to="item.path">
+            <v-btn flat v-for="item in userNavigationItems" :key="item.title" :to="item.path"
+                @click="item.title == 'Logout' ? logoutUser() : ''">
                 <v-icon left dark>{{ item.icon }}</v-icon>
                 {{ item.title }}
             </v-btn>
@@ -24,15 +25,18 @@
 </template>
 
 <script>
+import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
+
 export default {
     name: "AppHeader",
     data() {
         return {
             appTitle: 'E-commerce App',
             userNavigationItems: [
-                { title: 'My account', path: '/connect', icon: 'mdi-account-circle' },
+                { title: 'My account', path: '/account', icon: 'mdi-account-circle' },
                 { title: 'Favorites', path: '/favorites', icon: 'mdi-heart' },
-                { title: 'Shopping cart', path: '/cart', icon: 'mdi-shopping' }
+                { title: 'Shopping cart', path: '/cart', icon: 'mdi-shopping' },
+                { title: 'Logout', path: '/logout', icon: 'mdi-logout' }
             ],
             appNavigationItems: [
                 { title: 'Home', path: '/home' },
@@ -41,9 +45,27 @@ export default {
                 { title: 'Shoes', path: '/shoes' },
                 { title: 'Accessories', path: '/accessories' },
             ],
-            currentTab: ""
+            currentTab: "",
+            userIsLoggedIn: false,
+            auth: getAuth(),
         }
     },
+    mounted() {
+        this.auth = getAuth();
+        // console.log(this.auth);
+        onAuthStateChanged(this.auth, user => {
+            this.userIsLoggedIn = user ? true : false;
+            this.userNavigationItems[3] = this.userIsLoggedIn ? { title: 'Logout', path: '/logout', icon: 'mdi-logout' } : { title: 'Login', path: '/connect', icon: 'mdi-login' };
+            // console.log(this.userIsLoggedIn);
+        })
+    },
+    methods: {
+        logoutUser() {
+            signOut(this.auth).then(() => {
+                console.log("User signed out.");
+            })
+        }
+    }
 }
 </script>
 
@@ -58,6 +80,6 @@ a {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1000; 
+    z-index: 1000;
 }
 </style>

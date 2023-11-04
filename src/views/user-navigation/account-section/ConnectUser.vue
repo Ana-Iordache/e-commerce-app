@@ -3,19 +3,19 @@
         <div class="form_wrapper">
             <v-tabs fixed-tabs bg-color="" v-model="currentTab">
                 <v-tab value="tab-1">
-                    Sign up
+                    Login
                 </v-tab>
                 <v-tab value="tab-2">
-                    Login
+                    Sign up
                 </v-tab>
             </v-tabs>
 
             <v-window v-model="currentTab" class="window_container">
                 <v-window-item value="tab-1">
-                    <SignUpForm v-if="currentTab === 'tab-1'" />
+                    <LoginForm v-if="currentTab === 'tab-1'" />
                 </v-window-item>
                 <v-window-item value="tab-2">
-                    <LoginForm v-if="currentTab === 'tab-2'" />
+                    <SignUpForm v-if="currentTab === 'tab-2'" />
                 </v-window-item>
             </v-window>
         </div>

@@ -34,5 +34,9 @@ app.config.globalProperties.axios = axios;
 const baseUrlAxios = `http://${config.BACKEND_HOST}:${config.BACKEND_PORT}`;
 axios.defaults.baseURL = baseUrlAxios;
 
+// Initialize Firebase for auth
+// NOTE: you should create a file 'auth.js' in 'firebase-auth' folder with details metioned in 'auth_template.js'
+import initilizeFirebase from './firebase-auth/auth';
+initilizeFirebase();
 
 app.use(router).use(vuetify).mount('#app')

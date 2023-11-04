@@ -20,7 +20,8 @@
             <v-card color="blue-grey-lighten-4" class="pa-3 text-center">
                 <v-card-title>Creating account</v-card-title>
                 <v-card-text>
-                    <v-progress-circular indeterminate color="white" size="small" width="3" class="mr-2"></v-progress-circular>
+                    <v-progress-circular indeterminate color="white" size="small" width="3"
+                        class="mr-2"></v-progress-circular>
                     Please wait...
                 </v-card-text>
             </v-card>
@@ -29,6 +30,7 @@
 </template>
 
 <script>
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 export default {
     name: "SignUpForm",
@@ -54,13 +56,22 @@ export default {
             let formValidation = await this.$refs.form.validate();
             if (formValidation.valid) {
                 this.showDialog = true;
-                await this.signUpUser();
+                await this.signUpUser(this.user);
                 this.showDialog = false;
             }
         },
-        signUpUser() {
+        async signUpUser(user) {
+            const auth = getAuth();
+            createUserWithEmailAndPassword(auth, user.email, user.password)
+            .then(async () => {
+                console.log("User created successfully in firebase: ", auth.currentUser);
+                await this.addUser(user);
+            })
+            .catch(error => console.error(error));
+        },
+        addUser(user) {
             return new Promise(resolve => {
-                this.axios.post("/users", this.user)
+                this.axios.post("/users", user)
                     .then(() => {
                         // Redirect to home if sigup is successfull
                         this.$router.push('/home');
