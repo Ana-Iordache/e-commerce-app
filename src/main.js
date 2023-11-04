@@ -26,4 +26,13 @@ const vuetify = createVuetify({
     ssr: true,
 })
 
+
+// Axios
+import axios from 'axios';
+import config from '../config.json';
+app.config.globalProperties.axios = axios;
+const baseUrlAxios = `http://${config.BACKEND_HOST}:${config.BACKEND_PORT}`;
+axios.defaults.baseURL = baseUrlAxios;
+
+
 app.use(router).use(vuetify).mount('#app')

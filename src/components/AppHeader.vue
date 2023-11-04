@@ -1,5 +1,5 @@
 <template>
-    <v-toolbar>
+    <v-toolbar class="sticky_header">
         <v-toolbar-title>
             <router-link :to="'/home'">
                 {{ appTitle }}
@@ -51,5 +51,13 @@ export default {
 a {
     text-decoration: none;
     color: #000000DE;
+}
+
+.sticky_header {
+    position: sticky !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000; 
 }
 </style>
