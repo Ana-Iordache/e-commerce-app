@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const users = require('../controllers/users')
+const products = require('../controllers/products')
 
 async function requestHandler(callback, req, res) {
     if(!callback) {
@@ -22,5 +23,10 @@ async function requestHandler(callback, req, res) {
 router.get("/users", (req, res) => requestHandler(users.getAll, req, res));
 router.get("/users/:email", (req, res) => requestHandler(users.getByEmail, req, res));
 router.post("/users", (req, res) => requestHandler(users.addOne, req, res))
+
+/**
+ * PRODUCTS
+ */
+router.get("/categories", (req, res) => requestHandler(products.getCategoriesGrouped, req, res));
 
 module.exports = router;

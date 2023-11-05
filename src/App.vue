@@ -27,12 +27,16 @@ export default {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  align-items: center;
+  /* align-items: center; */
   margin: 2rem;
 }
 
 .form_title {
   text-align: center;
   margin-bottom: 2rem;
+}
+
+.custom_form {
+  margin-top: 2rem;
 }
 </style>

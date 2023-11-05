@@ -46,7 +46,9 @@ export default {
     display: flex;
     flex-direction: column;
     padding: 2rem 5rem;
-    
+}
+.page_container {
+    align-items: center;
 }
 .window_container {
     background-color: rgb(238, 238, 238);

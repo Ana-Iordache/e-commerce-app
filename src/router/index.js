@@ -9,6 +9,7 @@ import UserAccount from '@/views/user-navigation/UserAccount.vue'
 import Favorites from '@/views/user-navigation/Favorites.vue'
 import ShoppingCart from '@/views/user-navigation/ShoppingCart.vue'
 import Administration from '@/views/app-navigation/Administration.vue'
+import ProductForm from '@/views/app-navigation/administration/ProductForm.vue'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 const routes = [
@@ -65,6 +66,11 @@ const routes = [
     meta: {
       requiredAuth: true
     }
+  },
+  {
+    path: '/products/add',
+    component: ProductForm,
+
   }
 ];
 
