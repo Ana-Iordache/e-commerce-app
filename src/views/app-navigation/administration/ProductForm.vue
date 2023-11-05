@@ -1,6 +1,6 @@
 <template>
     <div class="page_container">
-        <PageHeader :title="'New product'"></PageHeader>
+        <PageHeader :title="'New product'" :pathToReturn="'/administration'"></PageHeader>
         <v-form class="custom_form" @submit.prevent="submitForm" ref="form">
             <v-row>
                 <v-col>
