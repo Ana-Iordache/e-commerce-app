@@ -37,6 +37,38 @@
 
             <v-row>
                 <v-col>
+                    <v-file-input show-size counter multiple variant="outlined" prepend-icon="mdi-camera" chips
+                        accept="image/png, image/jpeg, image/bmp" label="Images" title="Add product images"></v-file-input>
+                </v-col>
+            </v-row>
+
+            <v-row>
+                <v-divider></v-divider>
+            </v-row>
+
+            <v-row class="pa-2">
+                <div class="pr-2">Stock</div>
+                <v-icon title="Add" class="stock_icon" @click="addStock">{{ 'mdi-plus-circle' }}</v-icon>
+            </v-row>
+            <v-row v-for="(item, index) in product.stock" :key="index">
+                <v-col>
+                    <v-text-field label="Size" v-model="item.size" variant="outlined"
+                        class="no_input_details"></v-text-field>
+                </v-col>
+                <v-col>
+                    <v-text-field label="Quantity" type="number" v-model="item.quantity" class="no_input_details"
+                        append-icon="mdi-close-circle-outline" @click:append="removeStock(index)"
+                        variant="outlined"></v-text-field>
+
+                </v-col>
+            </v-row>
+
+            <v-row>
+                <v-divider></v-divider>
+            </v-row>
+
+            <v-row>
+                <v-col>
                     <v-textarea label="Description" variant="outlined" v-model="product.description"
                         :maxlength="300"></v-textarea>
                 </v-col>
@@ -70,6 +102,8 @@ export default {
                 price: null,
                 discount: 0,
                 description: "",
+                stock: [],
+                images: [],
             },
             rules: {
                 required: value => !!value || 'This field is required',
@@ -126,6 +160,12 @@ export default {
         },
         saveProduct(product) {
             console.log(product)
+        },
+        addStock() {
+            this.product.stock.push({ size: "", quantity: 0 })
+        },
+        removeStock(index) {
+            this.product.stock.splice(index, 1);
         }
     }
 }
@@ -140,5 +180,8 @@ export default {
 
 .red {
     color: red;
+}
+.stock_icon {
+    cursor: pointer;
 }
 </style>
