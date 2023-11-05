@@ -8,7 +8,7 @@
                         item-value="id" variant="outlined" :rules="[rules.required]"></v-select>
                 </v-col>
                 <v-col>
-                    <v-select label="Subcategory" v-model="product.subcategoryId" :items="subcategoriesOfCategory"
+                    <v-select label="Subcategory" v-model="product.subCategoryId" :items="subcategoriesOfCategory"
                         item-title="name" item-value="id" variant="outlined" :rules="[rules.required]"></v-select>
                 </v-col>
             </v-row>
@@ -38,7 +38,8 @@
             <v-row>
                 <v-col>
                     <v-file-input show-size counter multiple variant="outlined" prepend-icon="mdi-camera" chips
-                        accept="image/png, image/jpeg, image/bmp" label="Images" title="Add product images"></v-file-input>
+                        accept="image/png, image/jpeg, image/bmp" label="Images" title="Add product images"
+                        @change="uploadImages"></v-file-input>
                 </v-col>
             </v-row>
 
@@ -84,6 +85,7 @@
 <script>
 import PageHeader from '@/components/PageHeader.vue';
 import generalFunctionsMixin from '@/commons/mixins';
+import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 export default {
     name: 'ProductForm',
@@ -96,7 +98,7 @@ export default {
             categories: [],
             product: {
                 categoryId: null,
-                subcategoryId: "Select a category first",
+                subCategoryId: "Select a category first",
                 name: "",
                 gender: null,
                 price: null,
@@ -108,7 +110,8 @@ export default {
             rules: {
                 required: value => !!value || 'This field is required',
             },
-            MAX_LENGHT: 300
+            MAX_LENGHT: 300,
+            uploadedImages: {},
         }
     },
     async mounted() {
@@ -127,7 +130,7 @@ export default {
     },
     watch: {
         'product.categoryId'() {
-            this.product.subcategoryId = null;
+            this.product.subCategoryId = null;
         }
     },
     methods: {
@@ -155,17 +158,81 @@ export default {
         async submitForm() {
             let formValidation = await this.$refs.form.validate();
             if (formValidation.valid) {
+                await this.uploadImagesToFirebase();
                 await this.saveProduct(this.product);
+
             }
         },
         saveProduct(product) {
-            console.log(product)
+            return new Promise(resolve => {
+                this.axios.post("/products", product)
+                    .then(response => console.log('DEBUG ', response.data))
+                    .catch(error => console.error(error))
+                    .finally(() => resolve());
+            })
         },
         addStock() {
             this.product.stock.push({ size: "", quantity: 0 })
         },
         removeStock(index) {
             this.product.stock.splice(index, 1);
+        },
+        uploadImages(e) {
+            this.uploadedImages = e.target.files;
+        },
+        async uploadImagesToFirebase() {
+            const storage = getStorage();
+            const uploadPromises = [];
+
+            for (let file of this.uploadedImages) {
+                console.log("FILE: ", file);
+
+                let fileRef = storageRef(storage, 'products-images/' + file.name);
+                let uploadTask = uploadBytesResumable(fileRef, file);
+
+                const uploadPromise = new Promise((resolve, reject) => {
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            // Observe state change events such as progress, pause, and resume
+                            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            console.log('Upload is ' + progress + '% done');
+                            switch (snapshot.state) {
+                                case 'paused':
+                                    console.log('Upload is paused');
+                                    break;
+                                case 'running':
+                                    console.log('Upload is running');
+                                    break;
+                            }
+                        },
+                        (error) => {
+                            console.error(error);
+                            reject(error);
+                        },
+                        async () => {
+                            // Handle successful uploads on complete
+                            try {
+                                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                                this.product.images.push(downloadURL);
+                                console.log('File available at', downloadURL);
+                                resolve();
+                            } catch (error) {
+                                reject(error);
+                            }
+                        }
+                    );
+                });
+
+                uploadPromises.push(uploadPromise);
+            }
+
+            // Wait for all upload promises to resolve
+            try {
+                await Promise.all(uploadPromises);
+            } catch (error) {
+                console.error('Error uploading images:', error);
+            }
         }
     }
 }

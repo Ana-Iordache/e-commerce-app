@@ -1,4 +1,7 @@
 const Products = require('../models/Products');
+const Stock = require('../models/Stock');
+const Images = require('../models/Images');
+
 
 // GET /categories
 /**
@@ -44,6 +47,34 @@ async function getCategoriesGrouped(req, res) {
     }
 }
 
+// POST /products
+async function addOne(req, res) {
+    const { name, description, price, discount, subCategoryId, gender, stock, images } = req.body;
+
+    if (!name || !price || !subCategoryId || !gender) {
+        return res.status(400).json({ error: 'One or more required properties are missing.' });
+    }
+
+    const product = await Products.insert(name, description, price, discount, subCategoryId, gender);
+
+    if (product) {
+        let productCode = product['insertId'];
+
+        stock.forEach(async s => {
+            await Stock.insert(s.size, s.quantity, productCode);
+        })
+
+        images.forEach(async url => {
+            await Images.insert(url, productCode);
+        })
+
+        res.status(201).json({ message: 'Product added successfully with code: ' + productCode + '.' });
+    } else {
+        req.status(500).json({ error: 'Product addition failed.' });
+    }
+}
+
 module.exports = {
     getCategoriesGrouped,
+    addOne
 }

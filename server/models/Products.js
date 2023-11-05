@@ -6,6 +6,13 @@ async function selectSubcategoriesGroupedByCategories() {
     return result;
 }
 
+async function insert(name, description, price, discount, subCategoryId, gender) {
+    let query = `INSERT INTO products (name, description, addingDate, price, discount, subCategoryId, gender) VALUES ('${name}', '${description}', DATE(NOW()), ${price}, ${discount}, ${subCategoryId}, '${gender}')`;
+    let result = await db.sendQuery(query);
+    return result;
+}
+
 module.exports = {
     selectSubcategoriesGroupedByCategories,
+    insert
 }
