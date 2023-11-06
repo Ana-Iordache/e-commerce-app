@@ -6,6 +6,13 @@ async function insert(size, quantity, productCode) {
     return result;
 }
 
+async function getByProductCode(productCode) {
+    let query = `SELECT size, quantity FROM stock WHERE productCode = ${productCode}`;
+    let result = await db.sendQuery(query);
+    return result;
+}
+
 module.exports = {
     insert,
+    getByProductCode,
 }

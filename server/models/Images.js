@@ -6,6 +6,14 @@ async function insert(url, productCode) {
     return result;
 }
 
+async function getByProductCode(productCode) {
+    let query = `SELECT url FROM images WHERE productCode = ${productCode}`;
+    let result = await db.sendQuery(query);
+    return result;
+}
+
+
 module.exports = {
     insert,
+    getByProductCode
 }

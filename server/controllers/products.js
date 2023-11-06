@@ -47,6 +47,22 @@ async function getCategoriesGrouped(req, res) {
     }
 }
 
+// GET /products
+async function getAll(req, res) {
+    const products = await Products.selectAll();
+
+    if (products) {
+        for (let product of products) {
+            product.stock = await Stock.getByProductCode(product.code)
+            const productImages = await Images.getByProductCode(product.code);
+            product.images = productImages.map(img => img.url);
+        }
+        res.json(products);
+    } else {
+        res.status(404).json({ error: 'No products found.' })
+    }
+}
+
 // POST /products
 async function addOne(req, res) {
     const { name, description, price, discount, subCategoryId, gender, stock, images } = req.body;
@@ -76,5 +92,6 @@ async function addOne(req, res) {
 
 module.exports = {
     getCategoriesGrouped,
-    addOne
+    addOne,
+    getAll
 }

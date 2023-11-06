@@ -28,6 +28,7 @@ router.post("/users", (req, res) => requestHandler(users.addOne, req, res))
  * PRODUCTS
  */
 router.get("/categories", (req, res) => requestHandler(products.getCategoriesGrouped, req, res));
+router.get("/products", (req, res) => requestHandler(products.getAll, req, res));
 router.post("/products", (req, res) => requestHandler(products.addOne, req, res))
 
 

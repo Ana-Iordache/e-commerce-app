@@ -12,7 +12,14 @@ async function insert(name, description, price, discount, subCategoryId, gender)
     return result;
 }
 
+async function selectAll() {
+    let query = "SELECT * FROM vw_products";
+    let result = await db.sendQuery(query);
+    return result;
+}
+
 module.exports = {
     selectSubcategoriesGroupedByCategories,
-    insert
+    insert,
+    selectAll
 }

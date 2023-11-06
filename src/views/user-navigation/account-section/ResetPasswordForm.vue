@@ -19,7 +19,6 @@ export default {
             rules: {
                 required: value => !!value || 'This field is required',
             },
-            showConfirmationDialog: true,
         }
     },
     methods: {
