@@ -39,4 +39,28 @@ export default {
 .custom_form {
   margin-top: 2rem;
 }
+
+/**
+* Scrollbar
+*/
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: .5rem;
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar {
+  width: .6rem;
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: rgb(177, 177, 177);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(156, 156, 156);
+}
 </style>
