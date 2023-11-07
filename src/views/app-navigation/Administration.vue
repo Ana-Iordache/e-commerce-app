@@ -1,7 +1,18 @@
 <template>
     <div class="page_container">
-        <v-btn prepend-icon="mdi-plus" width="fit-content" variant="tonal" @click="showProductForm(true)">Add
+        <v-btn prepend-icon="mdi-plus" width="fit-content" class="ml-auto" variant="tonal" @click="showProductForm(true)">Add
             product</v-btn>
+
+        <v-data-table v-model:items-per-page="itemsPerPage" :headers="headers" :items="products" class="elevation-1">
+            <template v-slot:[`item.actions`]="{ item }">
+                <v-icon size="small" class="me-2" @click="showProductForm(true, item)" title="Edit product">
+                    mdi-pencil
+                </v-icon>
+                <v-icon size="small" @click="deleteProduct(item)" title="Delete product">
+                    mdi-delete
+                </v-icon>
+            </template>
+        </v-data-table>
     </div>
 
     <v-dialog v-model="addProduct.showFormDialog" width="80%">
@@ -11,7 +22,7 @@
             </v-btn>
             <v-card-title>Add product</v-card-title>
             <v-card-text>
-                <ProductForm @product-added="showConfirmation"></ProductForm>
+                <ProductForm @product-added="showConfirmation" :editProduct="editProduct"></ProductForm>
             </v-card-text>
         </v-card>
     </v-dialog>
@@ -25,9 +36,11 @@
 
 <script>
 import ProductForm from './administration/ProductForm.vue';
+import { VDataTable } from "vuetify/labs/VDataTable";
 export default {
     components: {
         ProductForm,
+        VDataTable
     },
     name: 'AdministrationPage',
     data() {
@@ -38,14 +51,27 @@ export default {
                 productAdded: false,
             },
             products: [],
+            headers: [
+                { title: "Name", align: "start", key: "name" },
+                { title: "Added at", align: "end", key: "addingDate" },
+                { title: "Price", align: "end", key: "price" },
+                { title: "Discount", align: "end", key: "discount" },
+                { title: "Category", align: "end", key: "category" },
+                { title: "Subcategory", align: "end", key: "subcategory" },
+                { title: "Gender", align: "end", key: "gender" },
+                { title: 'Actions', key: 'actions', sortable: false },
+            ],
+            itemsPerPage: 5,
+            editProduct: {},
         }
     },
     async mounted() {
         await this.loadProducts();
     },
     methods: {
-        showProductForm(show) {
+        showProductForm(show, product = null) {
             this.addProduct.showFormDialog = show;
+            this.editProduct = product;
         },
         showConfirmation(productAdded) {
             this.showProductForm(false);
@@ -56,10 +82,16 @@ export default {
             return new Promise(resolve => {
                 this.axios.get("/products")
                     .then(response => response.data)
-                    .then(data => this.products = data)
+                    .then(data => {
+                        this.products = data;
+                    })
                     .catch(error => console.error(error))
                     .finally(() => resolve());
             })
+        },
+        // TODO: delete /products/:id
+        deleteProduct(product) {
+            console.log(product)
         }
     }
 }
@@ -68,5 +100,13 @@ export default {
 <style>
 .v-card-text {
     overflow-y: auto;
+}
+
+.v-icon.mdi-pencil {
+    color: green;
+}
+
+.v-icon.mdi-delete {
+    color: darkred;
 }
 </style>

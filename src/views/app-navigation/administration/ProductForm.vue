@@ -32,7 +32,7 @@
             </v-col>
         </v-row>
 
-        <v-row>
+        <v-row v-if="!editProduct">
             <v-col>
                 <v-file-input show-size counter multiple variant="outlined" prepend-icon="mdi-camera" chips
                     accept="image/png, image/jpeg, image/bmp" label="Images" title="Add product images"
@@ -94,7 +94,11 @@ import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } f
 
 export default {
     name: 'ProductForm',
-
+    props: {
+        editProduct: {
+            type: Object
+        }
+    },
     emits: ['product-added'],
     mixins: [generalFunctionsMixin],
     data() {
@@ -120,7 +124,10 @@ export default {
         }
     },
     async mounted() {
-        await this.loadCategories();
+        await this.loadCategories()
+        if (this.editProduct != null) {
+            this.product = this.editProduct;
+        }
     },
     computed: {
         subcategoriesOfCategory() {
@@ -135,7 +142,8 @@ export default {
     },
     watch: {
         'product.categoryId'() {
-            this.product.subCategoryId = null;
+            if(this.editProduct == null)
+                this.product.subCategoryId = null;
         }
     },
     methods: {
@@ -165,7 +173,7 @@ export default {
             if (formValidation.valid) {
                 this.showDialog = true;
                 await this.uploadImagesToFirebase();
-                await this.saveProduct(this.product);
+                await this.saveProduct(this.product); // TODO: check if is put/post
                 this.showDialog = false;
             }
         },
