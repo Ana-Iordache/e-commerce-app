@@ -19,11 +19,33 @@
                     <div class="red">{{ product.discount }}% off</div>
                 </v-list-item-subtitle>
                 <template v-slot:append>
+                    <!-- TODO: prevent from adding more than once -->
                     <div class="justify-self-end ms-4">
                         <v-btn class="px-0" size="small" color="surface-variant" variant="text" icon="mdi-heart-outline"
                             title="Add to favorites" @click="addToFavorites"></v-btn>
-                        <v-btn class="px-0 ml-0" size="small" color="surface-variant" variant="text"
-                            icon="mdi-basket-plus-outline" title="Add to cart" @click="addToCart"></v-btn>
+
+                        <v-menu v-model="selectSizeMenu" :close-on-content-click="false" location="end">
+                            <template v-slot:activator="{ props }">
+                                <v-btn v-bind="props" class="px-0 ml-0" size="small" color="surface-variant" variant="text"
+                                    icon="mdi-basket-plus-outline" title="Add to cart"></v-btn>
+                            </template>
+
+                            <v-card width="auto">
+                                <v-card-item>
+                                    <v-radio-group v-model="selectedSize">
+                                        <v-radio v-for="stock in product.stock" :key="stock.size" :label="stock.size"
+                                            :value="stock.size"></v-radio>
+                                    </v-radio-group>
+                                </v-card-item>
+                                <v-divider></v-divider>
+                                <v-card-actions>
+                                    <v-btn variant="text" @click="selectSizeMenu = false"> Cancel </v-btn>
+                                    <v-btn variant="text" @click="selectSize">
+                                        Add
+                                    </v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-menu>
                     </div>
                 </template>
             </v-list-item>
@@ -47,6 +69,8 @@ export default {
         return {
             loading: false,
             image: "",
+            selectSizeMenu: false,
+            selectedSize: ""
         }
     },
     computed: {
@@ -54,6 +78,7 @@ export default {
     },
     mounted() {
         this.image = this.product.images[0];
+        this.selectedSize = this.product.stock[0].size;
     },
     methods: {
         changeImage() {
@@ -70,14 +95,27 @@ export default {
                 this.$router.push("/connect");
                 return;
             }
-            await this.add(`/users/${this.authenticationStore.user.id}/favorites`);
+            await this.add(`/users/${this.authenticationStore.user.id}/favorites`, { productCode: this.product.code });
         },
-        addToCart() {
-            console.log("addToCart")
+        async selectSize() {
+            await this.addToCart();
+            this.selectSizeMenu = false;
         },
-        add(url) {
+        async addToCart() {
+            if (this.authenticationStore.user == null) {
+                this.$router.push("/connect");
+                return;
+            }
+            const cart = {
+                productCode: this.product.code,
+                size: this.selectedSize,
+                quantity: 1
+            }
+            await this.add(`/users/${this.authenticationStore.user.id}/shoppingCarts`, cart);
+        },
+        add(url, data) {
             return new Promise(resolve => {
-                this.axios.post(url, { productCode: this.product.code })
+                this.axios.post(url, data)
                     .then(response => console.log(response.data))
                     .catch(error => console.error(error))
                     .finally(() => resolve());
@@ -95,5 +133,9 @@ export default {
 
 .product_image {
     transition: 0.3s;
+}
+
+.v-radio-group .v-input__details {
+    display: none;
 }
 </style>

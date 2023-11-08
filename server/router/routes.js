@@ -3,6 +3,7 @@ const router = express.Router();
 const users = require('../controllers/users')
 const products = require('../controllers/products')
 const favoriteProducts = require('../controllers/favoriteProducts')
+const shoppingCarts = require('../controllers/shoppingCarts')
 
 async function requestHandler(callback, req, res) {
     if (!callback) {
@@ -37,5 +38,11 @@ router.post("/products", (req, res) => requestHandler(products.addOne, req, res)
  */
 router.get("/users/:id/favorites", (req, res) => requestHandler(favoriteProducts.getAllByUserId, req, res))
 router.post("/users/:id/favorites", (req, res) => requestHandler(favoriteProducts.add, req, res))
+
+/**
+ * SHOPPING CARTS
+ */
+router.get("/users/:id/shoppingCarts", (req, res) => requestHandler(shoppingCarts.getAllByUserId, req, res))
+router.post("/users/:id/shoppingCarts", (req, res) => requestHandler(shoppingCarts.add, req, res))
 
 module.exports = router;
