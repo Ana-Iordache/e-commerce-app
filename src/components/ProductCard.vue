@@ -51,6 +51,13 @@
             </v-list-item>
         </v-card-actions>
     </v-card>
+
+    <!-- TODO: doesn't look right -->
+    <v-snackbar :timeout="4000" :color="confirmation.success ? 'green-lighten-1' : 'red-lighten-1'" variant="tonal"
+        v-model="confirmation.show">
+        <v-icon>{{ confirmation.show ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline' }}</v-icon>
+        {{ confirmation.success ? 'Product added successfully' : 'An error occured. Please try again' }}
+    </v-snackbar>
 </template>
 
 <script>
@@ -70,7 +77,11 @@ export default {
             loading: false,
             image: "",
             selectSizeMenu: false,
-            selectedSize: ""
+            selectedSize: "",
+            confirmation: {
+                show: false,
+                success: true
+            }
         }
     },
     computed: {
@@ -116,8 +127,16 @@ export default {
         add(url, data) {
             return new Promise(resolve => {
                 this.axios.post(url, data)
-                    .then(response => console.log(response.data))
-                    .catch(error => console.error(error))
+                    .then(response => {
+                        console.log(response.data);
+                        this.confirmation.show = true;
+                        this.confirmation.success = true;
+                    })
+                    .catch(error => {
+                        console.error(error)
+                        this.confirmation.show = true;
+                        this.confirmation.success = false;
+                    })
                     .finally(() => resolve());
             })
         }
