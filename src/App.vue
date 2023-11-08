@@ -63,4 +63,13 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgb(156, 156, 156);
 }
+
+/**
+* VMain
+*/
+.v-main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
 </style>
