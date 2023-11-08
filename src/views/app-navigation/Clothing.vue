@@ -1,6 +1,10 @@
 <template>
-    <div class="page_container_products">
-        <ProductCard></ProductCard>
+    <div class="">
+        <v-row>
+            <v-col v-for="product in clothingProducts" :key="product.id" cols="12" sm="6" md="4">
+                <ProductCard :product="product"></ProductCard>
+            </v-col>
+        </v-row>
     </div>
 </template>
 
@@ -10,16 +14,28 @@ export default {
     name: 'ClothingPage',
     components: {
         ProductCard,
+    },
+    data() {
+        return {
+            clothingProducts: []
+        }
+    },
+    async mounted() {
+        await this.loadClothingProducts();
+    },
+    methods: {
+        loadClothingProducts() {
+            return new Promise(resolve => {
+                this.axios.get("/products?category=clothing")
+                    .then(response => response.data)
+                    .then(data => this.clothingProducts = data)
+                    .catch(error => console.error(error))
+                    .finally(() => resolve());
+            })
+        }
     }
 }
 </script>
 
 <style>
-.page_container_products {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap
-    /* flex-shrink: 1; */
-    /* flex-grow: 1; */
-}
 </style>

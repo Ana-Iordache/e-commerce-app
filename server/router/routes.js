@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const users = require('../controllers/users')
 const products = require('../controllers/products')
+const favoriteProducts = require('../controllers/favoriteProducts')
 
 async function requestHandler(callback, req, res) {
-    if(!callback) {
+    if (!callback) {
         res.status(500).json({ error: "Router error. Please check controller callback function." });
         return;
     }
@@ -31,5 +32,10 @@ router.get("/categories", (req, res) => requestHandler(products.getCategoriesGro
 router.get("/products", (req, res) => requestHandler(products.getAll, req, res));
 router.post("/products", (req, res) => requestHandler(products.addOne, req, res))
 
+/**
+ * FAVORITE PRODUCTS
+ */
+router.get("/users/:id/favorites", (req, res) => requestHandler(favoriteProducts.getAllByUserId, req, res))
+router.post("/users/:id/favorites", (req, res) => requestHandler(favoriteProducts.add, req, res))
 
 module.exports = router;

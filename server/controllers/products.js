@@ -49,7 +49,10 @@ async function getCategoriesGrouped(req, res) {
 
 // GET /products
 async function getAll(req, res) {
-    const products = await Products.selectAll();
+    const category = req.query.category;
+    let products;
+
+    products = category ? await Products.selectByCategory(category) : await Products.selectAll();
 
     if (products) {
         for (let product of products) {

@@ -18,8 +18,15 @@ async function selectAll() {
     return result;
 }
 
+async function selectByCategory(category) {
+    let query = `SELECT * FROM vw_products WHERE category = '${category}'`;
+    let result = await db.sendQuery(query);
+    return result;
+}
+
 module.exports = {
     selectSubcategoriesGroupedByCategories,
     insert,
-    selectAll
+    selectAll,
+    selectByCategory
 }
