@@ -4,8 +4,24 @@
             <v-progress-linear :active="isActive" color="deep-purple" height="4" indeterminate></v-progress-linear>
         </template>
 
-        <v-img class="product_image" cover height="auto" :src="image" @mouseover="changeImage" @mouseout="resetImage">
-        </v-img>
+        <v-dialog width="60%">
+            <template v-slot:activator="{ props }">
+                <v-img v-bind="props" class="product_image" title="Click to see details" cover height="auto" :src="image"
+                    @mouseover="changeImage" @mouseout="resetImage">
+                </v-img>
+            </template>
+
+            <template v-slot:default="{ isActive }">
+                <v-card>
+                    <ProductDetails :product="product"></ProductDetails>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+
+                        <v-btn text="Close Dialog" @click="isActive.value = false"></v-btn>
+                    </v-card-actions>
+                </v-card>
+            </template>
+        </v-dialog>
 
         <v-card-actions>
             <v-list-item class="w-100 pe-0">
@@ -63,6 +79,7 @@
 <script>
 import { mapStores } from 'pinia';
 import { useAuthenticationStore } from '@/pinia-stores/authenticationStore';
+import ProductDetails from './ProductDetails.vue';
 
 export default {
     name: 'ProductCard',
@@ -71,6 +88,9 @@ export default {
             type: Object,
             required: true,
         }
+    },
+    components: {
+        ProductDetails,
     },
     data() {
         return {
@@ -152,6 +172,7 @@ export default {
 
 .product_image {
     transition: 0.3s;
+    cursor: pointer;
 }
 
 .v-radio-group .v-input__details {
