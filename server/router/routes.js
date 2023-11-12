@@ -38,6 +38,7 @@ router.post("/products", (req, res) => requestHandler(products.addOne, req, res)
  */
 router.get("/users/:id/favorites", (req, res) => requestHandler(favoriteProducts.getAllByUserId, req, res))
 router.post("/users/:id/favorites", (req, res) => requestHandler(favoriteProducts.add, req, res))
+router.delete("/users/:id/favorites/:code", (req, res) => requestHandler(favoriteProducts.remove, req, res))
 
 /**
  * SHOPPING CARTS

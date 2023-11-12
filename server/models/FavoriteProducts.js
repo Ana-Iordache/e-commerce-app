@@ -12,7 +12,14 @@ async function insert(productCode, userId) {
     return result;
 }
 
+async function remove(productCode, userId) {
+    let query = `DELETE FROM favorite_products WHERE userId = ${userId} AND productCode = ${productCode}`;
+    let result = await db.sendQuery(query);
+    return result;
+}
+
 module.exports = {
     readAllByUserId,
     insert,
+    remove,
 }

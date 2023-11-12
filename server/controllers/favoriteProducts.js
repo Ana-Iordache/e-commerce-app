@@ -27,11 +27,25 @@ async function add(req, res) {
         let id = favoriteProduct['insertId'];
         res.status(201).json({ message: 'Product added to favorites successfully.' });
     } else {
-        req.status(500).json({ error: 'Product addition failed.' });
+        res.status(500).json({ error: 'Product addition failed.' });
+    }
+}
+
+// DELETE /users/:id/favorites/:code
+async function remove(req, res) {
+    const userId = req.params.id;
+    const productCode = req.params.code;
+
+    const product = await FavoriteProducts.remove(productCode, userId);
+    if (product['affectedRows'] > 0) {
+        res.status(200).json({ message: 'Product removed from favorites successfully.' });
+    } else {
+        res.status(500).json({ error: 'Product removing failed.' });
     }
 }
 
 module.exports = {
     getAllByUserId,
     add,
+    remove,
 }

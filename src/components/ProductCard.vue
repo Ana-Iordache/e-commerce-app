@@ -35,8 +35,10 @@
                 <template v-slot:append>
                     <!-- TODO: prevent from adding more than once -->
                     <div class="justify-self-end ms-4">
-                        <v-btn class="px-0" size="small" color="surface-variant" variant="text" icon="mdi-heart-outline"
-                            title="Add to favorites" @click="addToFavorites"></v-btn>
+                        <v-btn class="px-0" size="small" color="surface-variant" variant="text"
+                            :icon="product.favorite ? 'mdi-heart' : 'mdi-heart-outline'"
+                            :title="product.favorite ? 'Remove from favorites' : 'Add to favorites'"
+                            @click="addOrRemoveFavorites"></v-btn>
 
                         <v-menu v-model="selectSizeMenu" :close-on-content-click="false" location="end">
                             <template v-slot:activator="{ props }">
@@ -66,11 +68,10 @@
         </v-card-actions>
     </v-card>
 
-    <!-- TODO: doesn't look right -->
     <v-snackbar :timeout="4000" :color="confirmation.success ? 'green-lighten-1' : 'red-lighten-1'" variant="tonal"
         v-model="confirmation.show">
         <v-icon>{{ confirmation.show ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline' }}</v-icon>
-        {{ confirmation.success ? 'Product added successfully' : 'An error occured. Please try again' }}
+        {{ confirmation.message }}
     </v-snackbar>
 </template>
 
@@ -92,6 +93,7 @@ export default {
     components: {
         ProductDetails,
     },
+    emits: ['favorite-changed'],
     data() {
         return {
             loading: false,
@@ -100,7 +102,8 @@ export default {
             selectedSize: "",
             confirmation: {
                 show: false,
-                success: true
+                success: true,
+                message: ""
             },
             showProductDetailsDialog: false,
         }
@@ -119,12 +122,16 @@ export default {
         resetImage() {
             this.image = this.product.images[0];
         },
-        async addToFavorites() {
+        async addOrRemoveFavorites() {
             if (this.authenticationStore.user == null) {
                 this.$router.push("/connect");
                 return;
             }
-            await this.add(`/users/${this.authenticationStore.user.id}/favorites`, { productCode: this.product.code });
+            if (this.product.favorite) {
+                await this.remove(`/users/${this.authenticationStore.user.id}/favorites/${this.product.code}`);
+            } else {
+                await this.add(`/users/${this.authenticationStore.user.id}/favorites`, { productCode: this.product.code });
+            }
         },
         async selectSize() {
             await this.addToCart();
@@ -149,11 +156,37 @@ export default {
                         console.log(response.data);
                         this.confirmation.show = true;
                         this.confirmation.success = true;
+                        this.confirmation.message = 'Product added successfully';
+                        if (url.includes("/favorites")) {
+                            this.$emit("favorite-changed", this.product.code, true);
+                        }
                     })
                     .catch(error => {
                         console.error(error)
                         this.confirmation.show = true;
                         this.confirmation.success = false;
+                        this.confirmation.message = 'An error occured. Please try again';
+                    })
+                    .finally(() => resolve());
+            })
+        },
+        remove(url) {
+            return new Promise(resolve => {
+                this.axios.delete(url)
+                    .then(response => {
+                        console.log(response.data);
+                        this.confirmation.show = true;
+                        this.confirmation.success = true;
+                        this.confirmation.message = 'Product removed successfully';
+                        if (url.includes("/favorites")) {
+                            this.$emit("favorite-changed", this.product.code, false);
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error)
+                        this.confirmation.show = true;
+                        this.confirmation.success = false;
+                        this.confirmation.message = 'An error occured. Please try again';
                     })
                     .finally(() => resolve());
             })
