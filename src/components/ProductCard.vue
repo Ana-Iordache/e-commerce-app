@@ -4,23 +4,21 @@
             <v-progress-linear :active="isActive" color="deep-purple" height="4" indeterminate></v-progress-linear>
         </template>
 
-        <v-dialog width="60%">
+        <v-dialog width="60%" v-model="showProductDetailsDialog">
             <template v-slot:activator="{ props }">
                 <v-img v-bind="props" class="product_image" title="Click to see details" cover height="auto" :src="image"
                     @mouseover="changeImage" @mouseout="resetImage">
                 </v-img>
             </template>
 
-            <template v-slot:default="{ isActive }">
-                <v-card>
-                    <ProductDetails :product="product"></ProductDetails>
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
+            <v-card>
+                <ProductDetails :product="product" @added-to-cart="addedToCartConfirmation"></ProductDetails>
 
-                        <v-btn text="Close Dialog" @click="isActive.value = false"></v-btn>
-                    </v-card-actions>
-                </v-card>
-            </template>
+                <v-divider></v-divider>
+                <v-card-actions class="align-self-center">
+                    <v-btn text="Close" @click="showProductDetailsDialog = false"></v-btn>
+                </v-card-actions>
+            </v-card>
         </v-dialog>
 
         <v-card-actions>
@@ -80,6 +78,7 @@
 import { mapStores } from 'pinia';
 import { useAuthenticationStore } from '@/pinia-stores/authenticationStore';
 import ProductDetails from './ProductDetails.vue';
+import generalFunctionsMixin from '@/commons/mixins';
 
 export default {
     name: 'ProductCard',
@@ -89,6 +88,7 @@ export default {
             required: true,
         }
     },
+    mixins: [generalFunctionsMixin],
     components: {
         ProductDetails,
     },
@@ -101,7 +101,8 @@ export default {
             confirmation: {
                 show: false,
                 success: true
-            }
+            },
+            showProductDetailsDialog: false,
         }
     },
     computed: {
@@ -117,9 +118,6 @@ export default {
         },
         resetImage() {
             this.image = this.product.images[0];
-        },
-        getDiscountedPrice(price, discount) {
-            return price - discount / 100 * price;
         },
         async addToFavorites() {
             if (this.authenticationStore.user == null) {
@@ -159,7 +157,12 @@ export default {
                     })
                     .finally(() => resolve());
             })
-        }
+        },
+        addedToCartConfirmation(confirmation) {
+            this.showProductDetailsDialog = false;
+            this.confirmation.show = true;
+            this.confirmation.success = confirmation;
+        },
     }
 
 }
