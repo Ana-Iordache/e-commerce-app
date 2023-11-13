@@ -1,5 +1,10 @@
 <template>
-    <div v-for="(fav, index) in favorites" :key="fav.code">
+    <v-progress-linear v-if="loadingData" color="blue-lighten-3" indeterminate></v-progress-linear>
+    <div class="d-flex justify-center pa-2 ma-2" v-else-if="favorites.length == 0">
+        You have no favorites yet
+        <v-icon> mdi-emoticon-sad-outline</v-icon>
+    </div>
+    <div v-else v-for="(fav, index) in favorites" :key="fav.code">
         <div class="d-flex flex-row pa-2 ma-2">
             <img :src="fav.imageUrl" height="300">
             <v-form class="d-flex flex-column flex-grow-1 px-2 mx-2" ref="form" @submit.prevent="addToCart(index, fav)">
@@ -60,10 +65,13 @@ export default {
                 success: true,
                 message: ""
             },
+            loadingData: true,
         }
     },
     async mounted() {
+        this.loadingData = true;
         await this.loadFavorites();
+        this.loadingData = false;
     },
     computed: {
         ...mapStores(useAuthenticationStore)
