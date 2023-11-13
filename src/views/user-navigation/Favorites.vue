@@ -29,7 +29,7 @@
                 </v-row>
 
                 <div class="d-flex flex-wrap justify-space-between">
-                    <v-btn class="flex-1-0 ma-2" text="Add to cart" variant="outlined" append-icon="mdi-shopping"
+                    <v-btn class="flex-1-0 ma-2" text="Add to cart" variant="outlined" append-icon="mdi-basket-plus-outline"
                         type="submit"></v-btn>
                     <v-btn class="flex-1-0 ma-2" text="Remove" variant="outlined" append-icon="mdi-heart-remove" color="red"
                         @click="removeFavorite(fav.code, index)"></v-btn>
