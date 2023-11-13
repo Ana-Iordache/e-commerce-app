@@ -1,7 +1,7 @@
 const db = require('../db/db');
 
 async function readAllByUserId(userId) {
-    let query = `SELECT * FROM favorite_products WHERE userId = ${userId}`;
+    let query = `SELECT * FROM vw_favorites_products WHERE userId = ${userId}`;
     let result = await db.sendQuery(query);
     return result;
 }

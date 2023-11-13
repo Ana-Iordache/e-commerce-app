@@ -6,6 +6,17 @@ async function getAllByUserId(req, res) {
     const favorites = await FavoriteProducts.readAllByUserId(userId);
 
     if (favorites.length) {
+        favorites.forEach(fav => {
+            let stockResponse = {};
+            let stock = fav.stock.split(",");
+            stock.forEach(s => {
+                let size = s.split(":")[0];
+                let quantity = s.split(":")[1];
+                stockResponse[size] = quantity;
+            })
+
+            fav.stock = stockResponse;
+        })
         res.json(favorites);
     } else {
         res.status(404).json({ error: "No favorites found." })

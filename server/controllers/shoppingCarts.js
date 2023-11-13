@@ -21,6 +21,15 @@ async function add(req, res) {
         return res.status(400).json({ error: 'One or more required properties are missing.' });
     }
 
+    // TODO
+    // const productFromCart = await ShoppingCarts.readOneByUserIdAndProductCode(userId, productCode);
+    // if(productFromCart) {
+    //     const updated = await ShoppingCarts.updateQuantityByUserIdAndProductCode(userId, productCode, quantity);
+    //     console.log("update: ", updated)
+    //     if(updated) {
+    //        return res.status(200).json({ message: 'Product quantity updated successfully.' });
+    //     }
+    // }
     const shoppingCart = await ShoppingCarts.insert(productCode, userId, size, quantity);
 
     if (shoppingCart) {

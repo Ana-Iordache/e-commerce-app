@@ -49,7 +49,7 @@ export default {
                 this.axios.get(`/users/${this.authenticationStore.user.id}/favorites`)
                     .then(response => response.data)
                     .then(data => {
-                        let favoriteIds = data.map(fav => fav.productCode);
+                        let favoriteIds = data.map(fav => fav.code);
                         this.shoesProducts = this.shoesProducts.map(prod => {
                             return {
                                 ...prod,
