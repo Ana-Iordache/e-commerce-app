@@ -52,7 +52,11 @@ async function getAll(req, res) {
     const category = req.query.category;
     let products;
 
-    products = category ? await Products.selectByCategory(category) : await Products.selectAll();
+    if (category) {
+        products = category == 'newIn' ? await Products.selectAddedInLastMonth() : await Products.selectByCategory(category);
+    } else {
+        products = await Products.selectAll();
+    }
 
     if (products) {
         for (let product of products) {

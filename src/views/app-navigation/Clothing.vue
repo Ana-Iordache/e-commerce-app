@@ -1,5 +1,6 @@
 <template>
-    <div class="">
+    <v-progress-linear v-if="loadingData" color="blue-lighten-3" indeterminate></v-progress-linear>
+    <div v-else>
         <v-row>
             <v-col v-for="product in clothingProducts" :key="product.id" cols="12" sm="6" md="4">
                 <ProductCard :product="product" @favorite-changed="updateFavorites"></ProductCard>
@@ -20,14 +21,17 @@ export default {
     },
     data() {
         return {
-            clothingProducts: []
+            clothingProducts: [],
+            loadingData: true,
         }
     },
     computed: {
         ...mapStores(useAuthenticationStore)
     },
     async mounted() {
+        this.loadingData = true;
         await this.loadClothingProducts();
+        this.loadingData = false;
     },
     methods: {
         loadClothingProducts() {

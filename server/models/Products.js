@@ -24,9 +24,16 @@ async function selectByCategory(category) {
     return result;
 }
 
+async function selectAddedInLastMonth() {
+    let query = `SELECT * from vw_products WHERE addingDate >= CURDATE() - INTERVAL 30 DAY`;
+    let result = await db.sendQuery(query);
+    return result;
+}
+
 module.exports = {
     selectSubcategoriesGroupedByCategories,
     insert,
     selectAll,
-    selectByCategory
+    selectByCategory,
+    selectAddedInLastMonth,
 }
