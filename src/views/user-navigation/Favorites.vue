@@ -104,7 +104,8 @@ export default {
                 }
                 return new Promise(resolve => {
                     this.axios.post(`/users/${this.authenticationStore.user.id}/shoppingCarts`, cart)
-                        .then(() => {
+                        .then(async () => {
+                            await this.removeFavorite(product.code, index, true);
                             this.confirmation.show = true;
                             this.confirmation.success = true;
                             this.confirmation.message = 'Product added successfully';
@@ -121,18 +122,18 @@ export default {
                 })
             }
         },
-        async removeFavorite(productCode, index) {
+        async removeFavorite(productCode, index, showConfirmation = true) {
             return new Promise(resolve => {
                 this.axios.delete(`/users/${this.authenticationStore.user.id}/favorites/${productCode}`)
                     .then(() => {
                         this.favorites.splice(index, 1);
-                        this.confirmation.show = true;
+                        this.confirmation.show = showConfirmation;
                         this.confirmation.success = true;
                         this.confirmation.message = 'Product removed successfully';
                     })
                     .catch(error => {
                         console.error(error)
-                        this.confirmation.show = true;
+                        this.confirmation.show = showConfirmation;
                         this.confirmation.success = false;
                         this.confirmation.message = 'An error occured. Please try again';
                     })

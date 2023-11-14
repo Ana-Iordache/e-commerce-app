@@ -6,6 +6,17 @@ async function getAllByUserId(req, res) {
     const cart = await ShoppingCarts.readAllByUserId(userId);
 
     if (cart.length) {
+        cart.forEach(c => {
+            let stockResponse = {};
+            let stock = c.stock.split(",");
+            stock.forEach(s => {
+                let size = s.split(":")[0];
+                let quantity = s.split(":")[1];
+                stockResponse[size] = quantity;
+            })
+
+            c.stock = stockResponse;
+        })
         res.json(cart);
     } else {
         res.status(404).json({ error: "No shopping carts found." })
@@ -40,7 +51,21 @@ async function add(req, res) {
     }
 }
 
+// DELETE /users/:id/shoppingCart/:code
+async function remove(req, res) {
+    const userId = req.params.id;
+    const productCode = req.params.code;
+
+    const product = await ShoppingCarts.remove(userId, productCode);
+    if (product['affectedRows'] > 0) {
+        res.status(200).json({ message: 'Product removed from cart successfully.' });
+    } else {
+        res.status(500).json({ error: 'Product removing failed.' });
+    }
+}
+
 module.exports = {
     getAllByUserId,
     add,
+    remove,
 }

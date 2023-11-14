@@ -45,5 +45,7 @@ router.delete("/users/:id/favorites/:code", (req, res) => requestHandler(favorit
  */
 router.get("/users/:id/shoppingCarts", (req, res) => requestHandler(shoppingCarts.getAllByUserId, req, res))
 router.post("/users/:id/shoppingCarts", (req, res) => requestHandler(shoppingCarts.add, req, res))
+router.delete("/users/:id/shoppingCarts/:code", (req, res) => requestHandler(shoppingCarts.remove, req, res))
+
 
 module.exports = router;

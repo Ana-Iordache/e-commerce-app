@@ -1,7 +1,7 @@
 const db = require('../db/db');
 
 async function readAllByUserId(userId) {
-    let query = `SELECT * FROM shopping_carts WHERE userId = ${userId}`;
+    let query = `SELECT * FROM vw_shopping_carts WHERE userId = ${userId}`;
     let result = await db.sendQuery(query);
     return result;
 }
@@ -19,7 +19,13 @@ async function insert(productCode, userId, size, quantity) {
 }
 
 async function updateQuantityByUserIdAndProductCode(userId, productCode, quantity) {
-    let query = `UPDATE shopping_carts SET quantity = ${quantity} WHERE userId = ${userId} AND producstCode = ${productCode}`;
+    let query = `UPDATE shopping_carts SET quantity = ${quantity} WHERE userId = ${userId} AND productCode = ${productCode}`;
+    let result = await db.sendQuery(query);
+    return result;
+}
+
+async function remove(userId, productCode) {
+    let query = `DELETE FROM shopping_carts WHERE userId = ${userId} AND productCode = ${productCode}`;
     let result = await db.sendQuery(query);
     return result;
 }
@@ -29,4 +35,5 @@ module.exports = {
     readOneByUserIdAndProductCode,
     insert,
     updateQuantityByUserIdAndProductCode,
+    remove,
 }
