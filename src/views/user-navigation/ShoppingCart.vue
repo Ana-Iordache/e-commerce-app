@@ -107,14 +107,8 @@
                             <v-divider></v-divider>
                         </v-list-item>
 
-                        <!-- <stripe-checkout
-                            ref="stripePayment"
-                            mode="payment"
-                            :pk="publishableKey"
-                            @loading="v=>loading=v"
-                        /> -->
-                        <div class="pa-2 ma-2 d-flex justify-center" >
-                            <v-btn color="blue" variant="outlined">Pay {{ getTotalToPay() }}€ </v-btn>
+                        <div class="pa-2 ma-2 d-flex justify-center">
+                            <v-btn color="blue" variant="outlined" @click="perpareForPayment">Pay {{ getTotalToPay() }}€</v-btn>
                         </div>
                     </template>
                 </v-stepper>
@@ -135,14 +129,12 @@ import { mapStores } from 'pinia';
 import { useAuthenticationStore } from '@/pinia-stores/authenticationStore';
 import generalFunctionsMixin from '@/commons/mixins';
 import { VStepper } from 'vuetify/labs/VStepper'
-// import { StripeCheckout } from '@vue-stripe/vue-stripe'
 
 export default {
     name: 'CartPage',
     mixins: [generalFunctionsMixin],
     components: {
         VStepper,
-        // StripeCheckout
     },
     data() {
         return {
@@ -239,9 +231,37 @@ export default {
         getTotalToPayPerProduct(product) {
             return this.getDiscountedPrice(product.price, product.discount) * product.quantity;
         },
-        // redirectToPayment() {
-        //     this.$refs.stripePayment.redirectToCheckout();
-        // }
+        async perpareForPayment() {
+            let products = this.generateProductsArray();
+            await this.redirectToPayment(products);
+        },
+        generateProductsArray() {
+            let productsArray = [];
+            for (let product of this.cart) {
+                productsArray.push({
+                    price_data: {
+                        currency: "eur",
+                        product_data: {
+                            name: product.name
+                        },
+                        unit_amount: Math.round(this.getDiscountedPrice(product.price, product.discount) * 100)
+                    },
+                    quantity: product.quantity
+                })
+            }
+            return productsArray;
+        },
+        redirectToPayment(products) {
+            return new Promise(resolve => {
+                this.axios.post("/create-checkout-session",  products)
+                    .then(response => response.data)
+                    .then(data => {
+                        window.location.href = data.url;
+                    })
+                    .catch(error => console.error(error))
+                    .finally(() => resolve());
+            })
+        }
     }
 }
 </script>

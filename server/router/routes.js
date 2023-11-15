@@ -4,6 +4,7 @@ const users = require('../controllers/users')
 const products = require('../controllers/products')
 const favoriteProducts = require('../controllers/favoriteProducts')
 const shoppingCarts = require('../controllers/shoppingCarts')
+const stripePayments = require('../controllers/stripePayments')
 
 async function requestHandler(callback, req, res) {
     if (!callback) {
@@ -46,6 +47,13 @@ router.delete("/users/:id/favorites/:code", (req, res) => requestHandler(favorit
 router.get("/users/:id/shoppingCarts", (req, res) => requestHandler(shoppingCarts.getAllByUserId, req, res))
 router.post("/users/:id/shoppingCarts", (req, res) => requestHandler(shoppingCarts.add, req, res))
 router.delete("/users/:id/shoppingCarts/:code", (req, res) => requestHandler(shoppingCarts.remove, req, res))
+
+/**
+ * STRIPE
+ */
+router.get("/success", (req, res) => requestHandler(stripePayments.successPayment, req, res))
+router.get("/cancel", (req, res) => requestHandler(stripePayments.cancel, req, res))
+router.post("/create-checkout-session", (req, res) => requestHandler(stripePayments.createCheckoutSession, req, res))
 
 
 module.exports = router;
