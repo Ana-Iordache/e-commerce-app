@@ -4,6 +4,7 @@ const users = require('../controllers/users')
 const products = require('../controllers/products')
 const favoriteProducts = require('../controllers/favoriteProducts')
 const shoppingCarts = require('../controllers/shoppingCarts')
+const addresses = require('../controllers/addresses')
 const stripePayments = require('../controllers/stripePayments')
 
 async function requestHandler(callback, req, res) {
@@ -26,6 +27,15 @@ async function requestHandler(callback, req, res) {
 router.get("/users", (req, res) => requestHandler(users.getAll, req, res));
 router.get("/users/:email", (req, res) => requestHandler(users.getByEmail, req, res));
 router.post("/users", (req, res) => requestHandler(users.addOne, req, res))
+router.put("/users/:id", (req, res) => requestHandler(users.updateById, req, res))
+
+
+/**
+ * ADDRESSES
+ */
+router.get("/users/:id/address", (req, res) => requestHandler(addresses.getByUserId, req, res));
+router.post("/users/:id/address", (req, res) => requestHandler(addresses.addOne, req, res));
+router.put("/addresses/:id", (req, res) => requestHandler(addresses.updateById, req, res));
 
 /**
  * PRODUCTS

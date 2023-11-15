@@ -44,8 +44,26 @@ async function addOne(req, res) {
     }
 }
 
+// PUT /users/{id}
+async function updateById(req, res) {
+    const { name, surname, phoneNumber, email } = req.body;
+    const id = req.params.id;
+
+    if (!name || !surname || !phoneNumber || !email) {
+        return res.status(400).json({ error: 'One or more required properties are missing.' });
+    }
+
+    const user = await Users.updateById(id, name, surname, phoneNumber, email);
+    if(user['affectedRows']) {
+        res.status(200).json({ message: 'User updated successfully.' });
+    } else {
+        req.status(500).json({ error: 'User update failed.' })
+    }
+}
+
 module.exports = {
     getAll,
     getByEmail,
     addOne,
+    updateById,
 }

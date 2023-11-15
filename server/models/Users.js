@@ -18,8 +18,22 @@ async function insert(name, surname, phoneNumber, email, password, isAdmin) {
     return result;
 }
 
+async function updateAddressForUser(userId, addressId) {
+    let query = `UPDATE users set addressId = ${addressId} WHERE id = ${userId}`;
+    let result = await db.sendQuery(query);
+    return result;
+}
+
+async function updateById(id, name, surname, phoneNumber, email) {
+    let query = `UPDATE users SET name = '${name}', surname = '${surname}', phoneNumber = '${phoneNumber}', email = '${email}' WHERE id = ${id}`;
+    let result = await db.sendQuery(query);
+    return result;
+}
+
 module.exports = {
     selectAll,
     selectByEmail,
     insert,
+    updateById,
+    updateAddressForUser,
 }

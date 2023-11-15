@@ -55,7 +55,8 @@
                     <template v-slot:[`item.1`]>
                         <h3 class="text-h6 mb-2">Products</h3>
                         <v-list-item v-for="product in cart" :key="product.code">
-                            <v-list-item-title>{{ product.name }} | {{ product.size }} | {{ product.quantity }}</v-list-item-title>
+                            <v-list-item-title>{{ product.name }} | {{ product.size }} | {{ product.quantity
+                            }}</v-list-item-title>
                             <v-list-item-subtitle v-if="!product.discount">{{ product.price }}€</v-list-item-subtitle>
                             <v-list-item-subtitle v-else class="d-inline-flex">
                                 <div class="me-1">{{ getDiscountedPrice(product.price, product.discount) }}€</div>
@@ -68,34 +69,36 @@
                     </template>
                     <template v-slot:[`item.2`]>
                         <h3 class="text-h6 mb-2">Address</h3>
-                        <v-row>
-                            <v-col>
-                                <v-text-field label="City" variant="outlined" density="compact"
-                                    v-model="deliveryAddress.city"></v-text-field>
-                            </v-col>
-                            <v-col>
-                                <v-text-field label="Street" variant="outlined" density="compact"
-                                    v-model="deliveryAddress.street"></v-text-field>
-                            </v-col>
-                            <v-col>
-                                <v-text-field label="Number" variant="outlined" density="compact"
-                                    v-model="deliveryAddress.number"></v-text-field>
-                            </v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col>
-                                <v-text-field label="Zip code" variant="outlined" density="compact"
-                                    v-model="deliveryAddress.zipCode"></v-text-field>
-                            </v-col>
-                            <v-col>
-                                <v-text-field label="Floor" variant="outlined" density="compact"
-                                    v-model="deliveryAddress.floor"></v-text-field>
-                            </v-col>
-                            <v-col>
-                                <v-text-field label="Apartment number" variant="outlined" density="compact"
-                                    v-model="deliveryAddress.appartmentNumber"></v-text-field>
-                            </v-col>
-                        </v-row>
+                        <v-form ref="form">
+                            <v-row>
+                                <v-col>
+                                    <v-text-field label="City" variant="outlined" density="compact"
+                                        v-model="deliveryAddress.city" :rules="[rules.required]"></v-text-field>
+                                </v-col>
+                                <v-col>
+                                    <v-text-field label="Street" variant="outlined" density="compact"
+                                        v-model="deliveryAddress.street" :rules="[rules.required]"></v-text-field>
+                                </v-col>
+                                <v-col>
+                                    <v-text-field label="Number" variant="outlined" density="compact"
+                                        v-model="deliveryAddress.number" :rules="[rules.required]"></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <v-text-field label="Zip code" variant="outlined" density="compact"
+                                        v-model="deliveryAddress.zipCode" :rules="[rules.required]"></v-text-field>
+                                </v-col>
+                                <v-col>
+                                    <v-text-field label="Floor" variant="outlined" density="compact"
+                                        v-model="deliveryAddress.floor" :rules="[rules.required]"></v-text-field>
+                                </v-col>
+                                <v-col>
+                                    <v-text-field label="Apartment number" variant="outlined" density="compact"
+                                        v-model="deliveryAddress.apartmentNumber" :rules="[rules.required]"></v-text-field>
+                                </v-col>
+                            </v-row>
+                        </v-form>
                     </template>
                     <template v-slot:[`item.3`]>
                         <h3 class="text-h6 mb-2">Pay and place order</h3>
@@ -112,6 +115,15 @@
                         </div>
                     </template>
                 </v-stepper>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="warningDialogIsOpen" width="auto">
+            <v-card>
+                <div class="d-flex justify-center pa-3 ma-3">
+                    <v-icon size="100" color="amber-accent-2">mdi-alert-circle-outline</v-icon>
+                </div>
+                <v-card-title>Please complete all the fields for the delivery address</v-card-title>
             </v-card>
         </v-dialog>
 
@@ -145,6 +157,10 @@ export default {
                 success: true,
                 message: ""
             },
+            warningDialogIsOpen: false,
+            rules: {
+                required: value => !!value || 'This field is required',
+            },
             // stepper:
             currentStepNo: 1,
             steps: ["Order details", "Delivery address", "Confirm order"],
@@ -154,17 +170,26 @@ export default {
                 number: null,
                 zipCode: null,
                 floor: null,
-                appartmentNumber: null
+                apartmentNumber: null
             },
+            addressAlreadyDefined: false,
         }
     },
     async mounted() {
         this.loadingData = true;
         await this.loadShoppingCart();
         this.loadingData = false;
+
+        await this.loadAddressOfCurrentUser();
     },
     computed: {
         ...mapStores(useAuthenticationStore)
+    },
+    watch: {
+        warningDialogIsOpen(newValue) {
+            if(!newValue) return;
+            setTimeout(() => (this.warningDialogIsOpen = false), 3000)
+        }
     },
     methods: {
         loadShoppingCart() {
@@ -173,6 +198,17 @@ export default {
                     .then(response => this.cart = response.data)
                     .catch(error => console.error(error))
                     .finally(() => resolve());
+            })
+        },
+        loadAddressOfCurrentUser() {
+            return new Promise(resolve => {
+                this.axios.get(`users/${this.authenticationStore.user.id}/address`)
+                .then(response => {
+                    this.deliveryAddress = response.data
+                    this.addressAlreadyDefined = true;
+                })
+                .catch(() => this.addressAlreadyDefined = false)
+                .finally(() => resolve());
             })
         },
         removeFromCart(productCode, index, showConfirmation = true) {
@@ -232,8 +268,37 @@ export default {
             return this.getDiscountedPrice(product.price, product.discount) * product.quantity;
         },
         async perpareForPayment() {
-            let products = this.generateProductsArray();
-            await this.redirectToPayment(products);
+            let formValidation = await this.$refs.form.validate();
+            if (formValidation.valid) {
+                await this.saveDeliveryAddress();
+                let products = this.generateProductsArray();
+                await this.redirectToPayment(products);
+            } else {
+                this.warningDialogIsOpen = true;
+            }
+        },
+        saveDeliveryAddress() {
+            let method;
+            let url;
+            if(this.addressAlreadyDefined) {
+                method = 'PUT';
+                url = `/addresses/${this.deliveryAddress.id}`;
+            } else {
+                method = 'POST';
+                url = `/users/${this.authenticationStore.user.id}/address`;
+            }
+
+            return new Promise(resolve => {
+                this.axios({
+                    method: method,
+                    url: url,
+                    data: this.deliveryAddress
+                })
+                    .then(response => console.log(response.data))
+                    .catch(error => console.log(error))
+                    .finally(() => resolve());
+            })
+            
         },
         generateProductsArray() {
             let productsArray = [];
@@ -253,7 +318,7 @@ export default {
         },
         redirectToPayment(products) {
             return new Promise(resolve => {
-                this.axios.post("/create-checkout-session",  products)
+                this.axios.post("/create-checkout-session", products)
                     .then(response => response.data)
                     .then(data => {
                         window.location.href = data.url;
