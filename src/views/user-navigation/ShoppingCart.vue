@@ -111,7 +111,8 @@
                         </v-list-item>
 
                         <div class="pa-2 ma-2 d-flex justify-center">
-                            <v-btn color="blue" variant="outlined" @click="perpareForPayment">Pay {{ getTotalToPay() }}€</v-btn>
+                            <v-btn color="blue" variant="outlined" @click="perpareForPayment">Pay {{ getTotalToPay()
+                            }}€</v-btn>
                         </div>
                     </template>
                 </v-stepper>
@@ -140,7 +141,7 @@
 import { mapStores } from 'pinia';
 import { useAuthenticationStore } from '@/pinia-stores/authenticationStore';
 import generalFunctionsMixin from '@/commons/mixins';
-import { VStepper } from 'vuetify/labs/VStepper'
+import { VStepper } from 'vuetify/labs/VStepper';
 
 export default {
     name: 'CartPage',
@@ -181,13 +182,15 @@ export default {
         this.loadingData = false;
 
         await this.loadAddressOfCurrentUser();
+
+        console.log(this.convertDateTimeToString(new Date()))
     },
     computed: {
         ...mapStores(useAuthenticationStore)
     },
     watch: {
         warningDialogIsOpen(newValue) {
-            if(!newValue) return;
+            if (!newValue) return;
             setTimeout(() => (this.warningDialogIsOpen = false), 3000)
         }
     },
@@ -203,12 +206,12 @@ export default {
         loadAddressOfCurrentUser() {
             return new Promise(resolve => {
                 this.axios.get(`users/${this.authenticationStore.user.id}/address`)
-                .then(response => {
-                    this.deliveryAddress = response.data
-                    this.addressAlreadyDefined = true;
-                })
-                .catch(() => this.addressAlreadyDefined = false)
-                .finally(() => resolve());
+                    .then(response => {
+                        this.deliveryAddress = response.data
+                        this.addressAlreadyDefined = true;
+                    })
+                    .catch(() => this.addressAlreadyDefined = false)
+                    .finally(() => resolve());
             })
         },
         removeFromCart(productCode, index, showConfirmation = true) {
@@ -272,7 +275,8 @@ export default {
             if (formValidation.valid) {
                 await this.saveDeliveryAddress();
                 let products = this.generateProductsArray();
-                await this.redirectToPayment(products);
+                let orderDetails = this.generateOrderDetails();
+                await this.redirectToPayment(products, orderDetails);
             } else {
                 this.warningDialogIsOpen = true;
             }
@@ -280,7 +284,7 @@ export default {
         saveDeliveryAddress() {
             let method;
             let url;
-            if(this.addressAlreadyDefined) {
+            if (this.addressAlreadyDefined) {
                 method = 'PUT';
                 url = `/addresses/${this.deliveryAddress.id}`;
             } else {
@@ -298,7 +302,7 @@ export default {
                     .catch(error => console.log(error))
                     .finally(() => resolve());
             })
-            
+
         },
         generateProductsArray() {
             let productsArray = [];
@@ -316,9 +320,18 @@ export default {
             }
             return productsArray;
         },
-        redirectToPayment(products) {
+        generateOrderDetails() {
+            const orderDetails = {
+                userId: this.authenticationStore.user.id,
+                orderDateTime: this.convertDateTimeToString(new Date()),
+                products: this.cart.map(p => `${p.code},${p.size},${p.quantity}`).join(";"),
+                amount: this.getTotalToPay()
+            }
+            return orderDetails;
+        },
+        redirectToPayment(products, orderDetails) {
             return new Promise(resolve => {
-                this.axios.post("/create-checkout-session", products)
+                this.axios.post("/create-checkout-session", { lineItems: products, orderDetails: orderDetails })
                     .then(response => response.data)
                     .then(data => {
                         window.location.href = data.url;

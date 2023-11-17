@@ -18,6 +18,10 @@ const routes = [
     redirect: '/home'
   },
   {
+    path: '/success',
+    redirect: '/home'
+  },
+  {
     path: '/logout',
     redirect: '/home'
   },

@@ -1,5 +1,15 @@
 <template>
-    Account info for {{ currentUser }}
+    <div class="d-flex flex-grow-1">
+        <div>
+            <v-list-item>Hi, {{ currentUser }}</v-list-item>
+            <v-divider></v-divider>
+            <v-list-item link title="Orders"></v-list-item>
+            <v-list-item link title="Personal information"></v-list-item>
+        </div>
+        <div style="background-color: whitesmoke;" class="flex-grow-1">
+
+        </div>
+    </div>
 </template>
 
 <script>
