@@ -7,7 +7,7 @@ async function selectAll() {
 }
 
 async function selectByEmail(email) {
-    let query = `SELECT id, name, surname, phoneNumber, isAdmin, addressId FROM users WHERE email = '${email}'`;
+    let query = `SELECT id, name, surname, phoneNumber, isAdmin, addressId, email FROM users WHERE email = '${email}'`;
     let result = await db.sendQuery(query);
     return result;
 }
@@ -24,8 +24,12 @@ async function updateAddressForUser(userId, addressId) {
     return result;
 }
 
-async function updateById(id, name, surname, phoneNumber, email) {
-    let query = `UPDATE users SET name = '${name}', surname = '${surname}', phoneNumber = '${phoneNumber}', email = '${email}' WHERE id = ${id}`;
+async function updateById(id, name, surname, phoneNumber, email, password) {
+    let query;
+    if (password)
+        query = `UPDATE users SET name = '${name}', surname = '${surname}', phoneNumber = '${phoneNumber}', email = '${email}', password = '${password}' WHERE id = ${id}`;
+    else
+        query = `UPDATE users SET name = '${name}', surname = '${surname}', phoneNumber = '${phoneNumber}', email = '${email}' WHERE id = ${id}`;
     let result = await db.sendQuery(query);
     return result;
 }
