@@ -142,7 +142,7 @@ export default {
     },
     watch: {
         'product.categoryId'() {
-            if(this.editProduct == null)
+            if (this.editProduct == null)
                 this.product.subCategoryId = null;
         }
     },
@@ -172,14 +172,30 @@ export default {
             let formValidation = await this.$refs.form.validate();
             if (formValidation.valid) {
                 this.showDialog = true;
-                await this.uploadImagesToFirebase();
-                await this.saveProduct(this.product); // TODO: check if is put/post
+                if (!this.editProduct)
+                    await this.uploadImagesToFirebase();
+
+                let method;
+                let url;
+                if (this.editProduct) {
+                    method = "PUT";
+                    url = `/products/${this.product.code}`;
+                } else {
+                    method = "POST";
+                    url = `/products`;
+                }
+
+                await this.saveProduct(method, url, this.product); // TODO: check if is put/post
                 this.showDialog = false;
             }
         },
-        saveProduct(product) {
+        saveProduct(method, url, product) {
             return new Promise(resolve => {
-                this.axios.post("/products", product)
+                this.axios({
+                    method: method,
+                    url: url,
+                    data: product
+                })
                     .then(response => {
                         console.log('DEBUG ', response.data)
                         this.$emit('product-added', true);

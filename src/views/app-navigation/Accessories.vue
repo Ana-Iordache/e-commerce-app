@@ -36,7 +36,7 @@ export default {
     methods: {
         loadAccessoriesProducts() {
             return new Promise(resolve => {
-                this.axios.get("/products?category=accesories")
+                this.axios.get("/products?category=accessories")
                     .then(response => response.data)
                     .then(async data => {
                         this.accessoriesProducts = data;

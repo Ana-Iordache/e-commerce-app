@@ -97,8 +97,34 @@ async function addOne(req, res) {
     }
 }
 
+// PUT /products/:id
+async function updateById(req, res) {
+    const { name, description, price, discount, subCategoryId, gender, stock } = req.body;
+    const id = req.params.id;
+
+    if (!name || !price || !subCategoryId || !gender) {
+        return res.status(400).json({ error: 'One or more required properties are missing.' });
+    }
+
+    const product = await Products.updateById(id, name, description, price, discount, subCategoryId, gender);
+    if (product['affectedRows']) {
+        stock.forEach(async s => {
+            if(s.id) {
+                await Stock.updateById(s.id, s.size, s.quantity);
+            } else {
+                await Stock.insert(s.size, s.quantity, id);
+            }
+        })
+
+        res.status(200).json({ message: 'Product update successfully.' });
+    } else {
+        req.status(500).json({ error: 'Product update failed.' });
+    }
+}
+
 module.exports = {
     getCategoriesGrouped,
     addOne,
-    getAll
+    getAll,
+    updateById
 }

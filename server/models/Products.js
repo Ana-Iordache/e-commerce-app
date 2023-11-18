@@ -12,8 +12,14 @@ async function insert(name, description, price, discount, subCategoryId, gender)
     return result;
 }
 
+async function updateById(code, name, description, price, discount, subCategoryId, gender) {
+    let query = `UPDATE products SET name = '${name}', description = '${description}', price = ${price}, discount = ${discount}, subCategoryId = ${subCategoryId}, gender = '${gender}' WHERE code = ${code}`;
+    let result = await db.sendQuery(query);
+    return result;
+}
+
 async function selectAll() {
-    let query = "SELECT * FROM vw_products";
+    let query = "SELECT * FROM vw_products ORDER BY code DESC";
     let result = await db.sendQuery(query);
     return result;
 }
@@ -33,6 +39,7 @@ async function selectAddedInLastMonth() {
 module.exports = {
     selectSubcategoriesGroupedByCategories,
     insert,
+    updateById,
     selectAll,
     selectByCategory,
     selectAddedInLastMonth,

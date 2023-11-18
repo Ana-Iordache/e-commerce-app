@@ -20,7 +20,7 @@
             <v-btn icon class="ml-auto" size="x-small" variant="outlined" @click="showProductForm(false)">
                 <v-icon>{{ 'mdi-close' }}</v-icon>
             </v-btn>
-            <v-card-title>Add product</v-card-title>
+            <v-card-title>{{ editProduct ? 'Edit' : 'Add' }} product</v-card-title>
             <v-card-text>
                 <ProductForm @product-added="showConfirmation" :editProduct="editProduct"></ProductForm>
             </v-card-text>
@@ -30,7 +30,7 @@
     <v-snackbar :timeout="4000" :color="addProduct.productAdded ? 'green-lighten-1' : 'red-lighten-1'" variant="tonal"
         v-model="addProduct.showProductAddedConfirmation">
         <v-icon>{{ addProduct.productAdded ? 'mdi-check-circle-outline' : 'mdi-close-circle-outline' }}</v-icon>
-        {{ addProduct.productAdded ? 'Product added successfully' : 'Product couldn\'t be added' }}
+        {{ addProduct.productAdded ? 'Product saved successfully' : 'Product couldn\'t be saved' }}
     </v-snackbar>
 </template>
 
@@ -53,7 +53,7 @@ export default {
             products: [],
             headers: [
                 { title: "Name", align: "start", key: "name" },
-                { title: "Added at", align: "end", key: "addingDate" },
+                { title: "Added at", align: "end", key: "addingDate" }, // TODO: parse to string
                 { title: "Price", align: "end", key: "price" },
                 { title: "Discount", align: "end", key: "discount" },
                 { title: "Category", align: "end", key: "category" },

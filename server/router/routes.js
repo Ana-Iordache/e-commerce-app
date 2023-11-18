@@ -44,6 +44,7 @@ router.put("/addresses/:id", (req, res) => requestHandler(addresses.updateById, 
 router.get("/categories", (req, res) => requestHandler(products.getCategoriesGrouped, req, res));
 router.get("/products", (req, res) => requestHandler(products.getAll, req, res));
 router.post("/products", (req, res) => requestHandler(products.addOne, req, res))
+router.put("/products/:id", (req, res) => requestHandler(products.updateById, req, res))
 
 /**
  * FAVORITE PRODUCTS
