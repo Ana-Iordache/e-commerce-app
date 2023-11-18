@@ -12,7 +12,14 @@ async function insertProductInOrders(orderId, productCode, size, quantity) {
     return result;
 }
 
+async function selectByUserId(userId) {
+    let query = `SELECT * from vw_orders WHERE userId = ${userId}`;
+    let result = await db.sendQuery(query);
+    return result;
+}
+
 module.exports = {
     insert,
     insertProductInOrders,
+    selectByUserId
 }

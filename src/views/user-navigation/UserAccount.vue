@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex flex-grow-1">
-        <div>
+        <div class="fit_content">
             <v-list-item>Hi, {{ currentUser }}</v-list-item>
             <v-divider></v-divider>
             <v-list-item link title="Orders" @click="setCurrentListItem('Orders')" :class="currentListItem == 'Orders' ? 'active' : ''"></v-list-item>
@@ -36,12 +36,15 @@ export default {
             currentListItem: "Orders"
         }
     },
+    mounted(){
+        
+        console.log(this.authenticationStore.user.id)
+    },
     methods: {
         setCurrentListItem(item) {
             console.log(item)
             this.currentListItem = item;
             
-            console.log(this.currentListItem)
         }
     }
 }
@@ -54,5 +57,9 @@ export default {
 
 .background_content {
     background-color: whitesmoke;
+}
+
+.fit_content {
+    min-width: fit-content;
 }
 </style>

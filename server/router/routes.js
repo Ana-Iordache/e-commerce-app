@@ -5,6 +5,7 @@ const products = require('../controllers/products')
 const favoriteProducts = require('../controllers/favoriteProducts')
 const shoppingCarts = require('../controllers/shoppingCarts')
 const addresses = require('../controllers/addresses')
+const orders = require('../controllers/orders')
 const stripePayments = require('../controllers/stripePayments')
 
 async function requestHandler(callback, req, res) {
@@ -65,5 +66,9 @@ router.get("/success", (req, res) => requestHandler(stripePayments.successPaymen
 router.get("/cancel", (req, res) => requestHandler(stripePayments.cancel, req, res))
 router.post("/create-checkout-session", (req, res) => requestHandler(stripePayments.createCheckoutSession, req, res))
 
+/**
+ * ORDERS
+ */
+router.get("/users/:id/orders", (req, res) => requestHandler(orders.getAllByUserId, req, res))
 
 module.exports = router;
