@@ -73,10 +73,12 @@ export default {
             this.addProduct.showFormDialog = show;
             this.editProduct = product;
         },
-        showConfirmation(productAdded) {
+        showConfirmation(productAdded, product) {
             this.showProductForm(false);
             this.addProduct.productAdded = productAdded;
             this.addProduct.showProductAddedConfirmation = true;
+
+            this.products.push(product);
         },
         loadProducts() {
             return new Promise(resolve => {

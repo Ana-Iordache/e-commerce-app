@@ -198,11 +198,11 @@ export default {
                 })
                     .then(response => {
                         console.log('DEBUG ', response.data)
-                        this.$emit('product-added', true);
+                        this.$emit('product-added', true, product);
                     })
                     .catch(error => {
                         console.error(error)
-                        this.$emit('product-added', false);
+                        this.$emit('product-added', false, {});
                     })
                     .finally(() => resolve());
             })
