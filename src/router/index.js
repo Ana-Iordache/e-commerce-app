@@ -59,10 +59,16 @@ const routes = [
   {
     path: '/favorites',
     component: Favorites,
+    meta: {
+      requiredAuth: true
+    }
   },
   {
     path: '/cart',
     component: ShoppingCart,
+    meta: {
+      requiredAuth: true
+    }
   },
   {
     path: '/administration',
