@@ -1,12 +1,10 @@
 <template>
     <v-carousel cycle height="100%" hide-delimiter-background show-arrows="hover">
-        <v-carousel-item v-for="(slide, i) in slides" :key="i">
-            <v-sheet :color="colors[i]" height="100%">
-                <div class="d-flex fill-height justify-center align-center">
-                    <div class="text-h2">
-                        {{ slide }} Slide
-                    </div>
-                </div>
+        <v-carousel-item v-for="(image, i) in images" :key="i">
+            <v-sheet>
+                <!-- <div class="d-flex fill-height justify-center align-center"> -->
+                   <v-img :src="image"></v-img>
+                <!-- </div> -->
             </v-sheet>
         </v-carousel-item>
     </v-carousel>
@@ -30,6 +28,12 @@ export default {
                 'Fourth',
                 'Fifth',
             ],
+            images: [
+                "https://static.hm.com.cn/media/tool/template/images/2023/11/14/t/e/teaser-pc.jpg",
+                "https://static.hm.com.cn/media/tool/template/images/2023/11/14/1/5/1509b-3x2-1_compressed.jpg",
+                "https://static.hm.com.cn/media/tool/template/images/2023/11/14/5/0/5038f-3x2-1_compressed.jpg",
+                "https://static.hm.com.cn/media/tool/template/images/2023/11/15/t/e/teaser-logo.jpg"
+            ]
         }
     },
 }
