@@ -35,3 +35,4 @@ INSERT INTO `ecommerce_app`.`subcategories`(`name`, `categoryId`) VALUES ('jewel
 INSERT INTO `ecommerce_app`.`subcategories`(`name`, `categoryId`) VALUES ('sunglasses', 3);
 INSERT INTO `ecommerce_app`.`subcategories`(`name`, `categoryId`) VALUES ('wallets', 3);
 INSERT INTO `ecommerce_app`.`subcategories`(`name`, `categoryId`) VALUES ('hair', 3);
+INSERT INTO `ecommerce_app`.`subcategories`(`name`, `categoryId`) VALUES ('others', 3);
