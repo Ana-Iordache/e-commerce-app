@@ -36,6 +36,12 @@ async function selectAddedInLastMonth() {
     return result;
 }
 
+async function remove(code) {
+    let query = `DELETE FROM products WHERE code = ${code}`;
+    let result = await db.sendQuery(query);
+    return result;
+}
+
 module.exports = {
     selectSubcategoriesGroupedByCategories,
     insert,
@@ -43,4 +49,5 @@ module.exports = {
     selectAll,
     selectByCategory,
     selectAddedInLastMonth,
+    remove,
 }

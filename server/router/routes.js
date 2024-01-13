@@ -45,6 +45,7 @@ router.get("/categories", (req, res) => requestHandler(products.getCategoriesGro
 router.get("/products", (req, res) => requestHandler(products.getAll, req, res));
 router.post("/products", (req, res) => requestHandler(products.addOne, req, res))
 router.put("/products/:id", (req, res) => requestHandler(products.updateById, req, res))
+router.delete("/products/:id", (req, res) => requestHandler(products.remove, req, res))
 
 /**
  * FAVORITE PRODUCTS

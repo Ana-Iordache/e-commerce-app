@@ -122,9 +122,22 @@ async function updateById(req, res) {
     }
 }
 
+// DELETE /products/:id
+async function remove(req, res) {
+    const code = req.params.id;
+
+    const product = await Products.remove(code);
+    if (product['affectedRows'] > 0) {
+        res.status(200).json({ message: 'Product removed successfully.' });
+    } else {
+        res.status(500).json({ error: 'Product could\'t be removed.' });
+    }
+}
+
 module.exports = {
     getCategoriesGrouped,
     addOne,
     getAll,
-    updateById
+    updateById,
+    remove,
 }
